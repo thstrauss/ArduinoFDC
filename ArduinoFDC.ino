@@ -25,10 +25,10 @@
 #define USE_ARDUDOS
 
 // commenting this out will remove the low-level disk monitor
-#define USE_MONITOR
+//#define USE_MONITOR
 
 // comenting this out will remove support for XModem data transfers
-//#define USE_XMODEM
+#define USE_XMODEM
 
 
 #if defined(__AVR_ATmega32U4__) && defined(USE_ARDUDOS) && (defined(USE_MONITOR) || defined(USE_XMODEM))
@@ -270,6 +270,40 @@ void print_ff_error(FRESULT fr)
   Serial.println();
 }
 
+void printDigit(WORD digit) {
+  if (digit < 10) {
+    Serial.write('0'); 
+  }
+  Serial.print(digit);
+}
+
+void printDate(WORD date) {
+  int month = (date >> 5) & 0x0F;
+  printDigit(month);
+  Serial.write('/'); 
+  int day = date & 0x1F;
+  printDigit(day);
+  Serial.write('/'); 
+  Serial.print(1980+(date>>9)); 
+}
+
+void printTime(WORD time) {
+  int hours = (time >> 11)&0x1f;
+  printDigit(hours);
+  Serial.write(':'); 
+  int minutes = (time>>5) & 0x3f;
+  printDigit(minutes);
+  Serial.write(':'); 
+  int seconds = (time&0x1F)<<1;
+  printDigit(seconds);
+}
+
+void printDateTime(FILINFO* finfo) {
+  printDate(finfo->fdate);
+  Serial.write(' ');
+  printTime(finfo->ftime);
+  Serial.write(' ');
+}
 
 void arduDOS()
 {
@@ -284,7 +318,16 @@ void arduDOS()
       Serial.print(F(":>"));
       char *cmd = read_user_cmd(tempbuffer, TEMPBUFFER_SIZE);
 
-      if( strcmp_PF(cmd, PSTR("a:"))==0 || strcmp_PF(cmd, PSTR("b:"))==0 )
+      if ( strcmp_PF(cmd, PSTR("label"))==0 ) {
+        char label[12];
+        DWORD labelLength;
+
+        ArduinoFDC.motorOn();
+        f_getlabel("\\", label, &labelLength);
+        Serial.write('Label: ');
+        Serial.write(label);
+      }
+      else if( strcmp_PF(cmd, PSTR("a:"))==0 || strcmp_PF(cmd, PSTR("b:"))==0 )
         {
           byte drive = cmd[0]-'a';
           if( drive != ArduinoFDC.selectedDrive() )
@@ -311,21 +354,16 @@ void arduDOS()
                   fr = f_readdir(&dir, &finfo);
                   if( fr!=FR_OK || finfo.fname[0]==0 )
                     break;
-                  
                   char *c = finfo.fname;
-                  byte col = 0;
-                  while( *c!=0 && *c!='.' ) { Serial.write(toupper(*c)); col++; c++; }
-                  while( col<9 ) { Serial.write(' '); col++; }
-                  if( *c=='.' )
-                    {
-                      c++;
-                      while( *c!=0 ) { Serial.write(toupper(*c)); col++; c++; }
-                    }
-                  while( col<14 ) { Serial.write(' '); col++; }
-                  if( finfo.fattrib & AM_DIR )
+                  Serial.write(c); 
+                  Serial.write(' ');          
+                  printDateTime(&finfo);
+                  if( finfo.fattrib & AM_DIR ) {
                     Serial.println(F("<DIR>"));
-                  else
+                  }
+                  else {
                     Serial.println(finfo.fsize);
+                  }
                   count++;
                 }
 
@@ -963,8 +1001,8 @@ void monitor()
 
 void setup() 
 {
-  Serial.begin(115200);
-  ArduinoFDC.begin(ArduinoFDCClass::DT_3_HD, ArduinoFDCClass::DT_3_HD);
+  Serial.begin(921600);
+  ArduinoFDC.begin(ArduinoFDCClass::DT_3_HD, ArduinoFDCClass::DT_5_HD);
 
   // must save flash space if all three of ARDUDOS/MONITOR/XMODEM are enabled on UNO
 #if !defined(USE_ARDUDOS) || !defined(USE_MONITOR) || !defined(USE_XMODEM) || defined(__AVR_ATmega2560__)
