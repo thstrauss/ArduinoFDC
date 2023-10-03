@@ -1,0 +1,15 @@
+﻿################################################################################
+# This .gitignore file was automatically created by Microsoft(R) Visual Studio.
+################################################################################
+
+/.vs/ArduinoFDC-mine/FileContentIndex/0eb2a806-10db-4b88-adb7-9d6518305ed7.vsidx
+/.vs/ArduinoFDC-mine/v17/.wsuo
+/.vs/ArduinoFDC-mine/FileContentIndex/07d76bb0-9865-45ac-a456-8f52818d5c1f.vsidx
+/.vs/ArduinoFDC-mine/v17/Browse.VC.db
+/.vs/ArduinoFDC-mine/v17/Browse.VC.db-shm
+/.vs/ArduinoFDC-mine/v17/Browse.VC.db-wal
+/.vs/ArduinoFDC-mine/v17/Browse.VC.opendb
+/.vs/ProjectSettings.json
+/.vs/slnx.sqlite
+/.vs/VSWorkspaceState.json
+/.vs/ArduinoFDC-mine/FileContentIndex
