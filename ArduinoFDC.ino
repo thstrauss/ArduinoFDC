@@ -1001,11 +1001,12 @@ void monitor()
 
 void setup() 
 {
-  Serial.begin(921600);
+  Serial.begin(460800);
   ArduinoFDC.begin(ArduinoFDCClass::DT_3_HD, ArduinoFDCClass::DT_5_HD);
 
   // must save flash space if all three of ARDUDOS/MONITOR/XMODEM are enabled on UNO
 #if !defined(USE_ARDUDOS) || !defined(USE_MONITOR) || !defined(USE_XMODEM) || defined(__AVR_ATmega2560__)
+  Serial.println();
   Serial.print(F("Drive A: ")); print_drive_type(ArduinoFDC.getDriveType()); Serial.println();
   if( ArduinoFDC.selectDrive(1) )
     {
@@ -1014,7 +1015,6 @@ void setup()
     }
 #endif
 }
-
 
 void loop() 
 {

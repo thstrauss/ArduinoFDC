@@ -1251,13 +1251,13 @@ ArduinoFDCClass::ArduinoFDCClass()
   m_motorState[0] = false;
   m_motorState[1] = false; 
   m_driveType[0]  = DT_3_HD;
-  m_driveType[1]  = DT_3_HD;
+  m_driveType[1]  = DT_5_HD;
   m_bitLength[0]  = 0;
   m_bitLength[1]  = 0;
 
 #if defined(PIN_DENSITY)
   m_densityPinMode[0] = DP_DISCONNECT;
-  m_densityPinMode[1] = DP_DISCONNECT;
+  m_densityPinMode[1] = DP_OUTPUT_LOW_FOR_DD;
 #endif
 }
 
